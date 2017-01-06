@@ -21,6 +21,7 @@ public:
 
     LRESULT OnCreate(LPCREATESTRUCT lpCreateStruct);
     void OnDestroy();
+    void OnTimer(UINT_PTR nIDEvent);
     void OnPaint(CDCHandle dc);
     void OnSize(UINT nType, CSize size);
     void OnContextMenu(CWindow wnd, CPoint point);
@@ -33,6 +34,7 @@ public:
     BEGIN_MSG_MAP_EX(oscilloscope_ui_element_instance)
         MSG_WM_CREATE(OnCreate)
         MSG_WM_DESTROY(OnDestroy)
+        MSG_WM_TIMER(OnTimer)
         MSG_WM_PAINT(OnPaint)
         MSG_WM_SIZE(OnSize)
         MSG_WM_CONTEXTMENU(OnContextMenu)
@@ -42,7 +44,15 @@ protected:
     ui_element_instance_callback::ptr m_callback;
 
 private:
+    enum {
+        ID_REFRESH_TIMER = 1
+    };
+
     oscilloscope_config m_config;
+    DWORD m_last_refresh;
+    DWORD m_refresh_interval;
+
+    visualisation_stream_v2::ptr m_vis_stream;
 
     CComPtr<ID2D1Factory> m_pDirect2dFactory;
     CComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;

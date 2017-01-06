@@ -52,6 +52,13 @@ ui_element_config::ptr oscilloscope_ui_element_instance::get_configuration() {
     return builder.finish(g_get_guid());
 }
 
+void oscilloscope_ui_element_instance::notify(const GUID & p_what, t_size p_param1, const void * p_param2, t_size p_param2size) {
+    if (p_what == ui_element_notify_colors_changed) {
+        m_pStrokeBrush.Release();
+        Invalidate();
+    }
+}
+
 LRESULT oscilloscope_ui_element_instance::OnCreate(LPCREATESTRUCT lpCreateStruct) {
     HRESULT hr = S_OK;
     
@@ -68,7 +75,6 @@ void oscilloscope_ui_element_instance::OnDestroy() {
     m_pDirect2dFactory.Release();
     m_pRenderTarget.Release();
     m_pStrokeBrush.Release();
-    m_pFillBrush.Release();
 }
 
 void oscilloscope_ui_element_instance::OnPaint(CDCHandle dc) {
@@ -92,7 +98,9 @@ HRESULT oscilloscope_ui_element_instance::Render() {
 
         m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
-        m_pRenderTarget->Clear(D2D1::ColorF(1.0f, 1.0f, 1.0f));
+        t_ui_color colorBackground = m_callback->query_std_color(ui_color_background);
+
+        m_pRenderTarget->Clear(D2D1::ColorF(GetRValue(colorBackground) / 255.0f, GetGValue(colorBackground) / 255.0f, GetBValue(colorBackground) / 255.0f));
 
         D2D1_SIZE_F rtSize = m_pRenderTarget->GetSize();
 
@@ -283,12 +291,10 @@ HRESULT oscilloscope_ui_element_instance::CreateDeviceResources() {
             hr = m_pDirect2dFactory->CreateHwndRenderTarget(renderTargetProperties, hwndRenderTargetProperties, &m_pRenderTarget);
         }
 
-        if (SUCCEEDED(hr) && !m_pFillBrush) {
-            hr = m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f), &m_pFillBrush);
-        }
-
         if (SUCCEEDED(hr) && !m_pStrokeBrush) {
-            hr = m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f), &m_pStrokeBrush);
+            t_ui_color colorText = m_callback->query_std_color(ui_color_text);
+
+            hr = m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(GetRValue(colorText) / 255.0f, GetGValue(colorText) / 255.0f, GetBValue(colorText) / 255.0f), &m_pStrokeBrush);
         }
     } else {
         hr = S_FALSE;
@@ -299,7 +305,6 @@ HRESULT oscilloscope_ui_element_instance::CreateDeviceResources() {
 
 void oscilloscope_ui_element_instance::DiscardDeviceResources() {
     m_pRenderTarget.Release();
-    m_pFillBrush.Release();
     m_pStrokeBrush.Release();
 }
 

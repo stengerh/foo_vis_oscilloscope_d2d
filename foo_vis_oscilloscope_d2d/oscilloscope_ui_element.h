@@ -17,6 +17,7 @@ public:
     void initialize_window(HWND p_parent);
 	virtual void set_configuration(ui_element_config::ptr p_data);
 	virtual ui_element_config::ptr get_configuration();
+    virtual void notify(const GUID & p_what, t_size p_param1, const void * p_param2, t_size p_param2size);
 
     LRESULT OnCreate(LPCREATESTRUCT lpCreateStruct);
     void OnDestroy();
@@ -46,5 +47,4 @@ private:
     CComPtr<ID2D1Factory> m_pDirect2dFactory;
     CComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
     CComPtr<ID2D1SolidColorBrush> m_pStrokeBrush;
-    CComPtr<ID2D1SolidColorBrush> m_pFillBrush;
 };

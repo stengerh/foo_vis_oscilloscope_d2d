@@ -150,52 +150,7 @@ HRESULT oscilloscope_ui_element_instance::Render() {
                 double window_duration = m_config.get_window_duration();
                 audio_chunk_impl chunk;
                 if (m_vis_stream->get_chunk_absolute(chunk, time - window_duration / 2, window_duration)) {
-                    D2D1_SIZE_F rtSize = m_pRenderTarget->GetSize();
-
-                    CComPtr<ID2D1PathGeometry> pPath;
-
-                    hr = m_pDirect2dFactory->CreatePathGeometry(&pPath);
-
-                    if (SUCCEEDED(hr)) {
-                        CComPtr<ID2D1GeometrySink> pSink;
-            
-                        hr = pPath->Open(&pSink);
-
-                        t_uint32 channel_count = chunk.get_channel_count();
-                        t_uint32 sample_count = chunk.get_sample_count();
-                        const audio_sample *samples = chunk.get_data();
-
-                        for (t_uint32 channel_index = 0; channel_index < channel_count; ++channel_index) {
-                            float zoom = (float) m_config.get_zoom_factor();
-                            float channel_baseline = (float) (channel_index + 0.5) / (float) channel_count * rtSize.height;
-                            for (t_uint32 sample_index = 0; sample_index < sample_count; ++sample_index) {
-                                audio_sample sample = samples[sample_index * channel_count + channel_index];
-                                float x = (float) sample_index / (float) (sample_count - 1) * rtSize.width;
-                                float y = channel_baseline - sample * zoom * rtSize.height / 2 / channel_count;
-                                if (sample_index == 0) {
-                                    pSink->BeginFigure(D2D1::Point2F(x, y), D2D1_FIGURE_BEGIN_HOLLOW);
-                                } else {
-                                    pSink->AddLine(D2D1::Point2F(x, y));
-                                }
-                            }
-                            if (channel_count > 0 && sample_count > 0) {
-                                pSink->EndFigure(D2D1_FIGURE_END_OPEN);
-                            }
-                        }
-
-                        if (SUCCEEDED(hr)) {
-                            hr = pSink->Close();
-                        }
-
-                        if (SUCCEEDED(hr)) {
-                            D2D1_STROKE_STYLE_PROPERTIES strokeStyleProperties = D2D1::StrokeStyleProperties(D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_LINE_JOIN_BEVEL);
-
-                            CComPtr<ID2D1StrokeStyle> pStrokeStyle;
-                            m_pDirect2dFactory->CreateStrokeStyle(strokeStyleProperties, nullptr, 0, &pStrokeStyle);
-
-                            m_pRenderTarget->DrawGeometry(pPath, m_pStrokeBrush, 0.75f, pStrokeStyle);
-                        }
-                    }
+                    RenderChunk(chunk);
                 }
             }
         }
@@ -211,6 +166,60 @@ HRESULT oscilloscope_ui_element_instance::Render() {
 
     return hr;
 }
+
+HRESULT oscilloscope_ui_element_instance::RenderChunk(const audio_chunk &chunk) {
+    HRESULT hr = S_OK;
+
+    D2D1_SIZE_F rtSize = m_pRenderTarget->GetSize();
+
+    CComPtr<ID2D1PathGeometry> pPath;
+
+    hr = m_pDirect2dFactory->CreatePathGeometry(&pPath);
+
+    if (SUCCEEDED(hr)) {
+        CComPtr<ID2D1GeometrySink> pSink;
+            
+        hr = pPath->Open(&pSink);
+
+        t_uint32 channel_count = chunk.get_channel_count();
+        t_uint32 sample_count = chunk.get_sample_count();
+        const audio_sample *samples = chunk.get_data();
+
+        for (t_uint32 channel_index = 0; channel_index < channel_count; ++channel_index) {
+            float zoom = (float) m_config.get_zoom_factor();
+            float channel_baseline = (float) (channel_index + 0.5) / (float) channel_count * rtSize.height;
+            for (t_uint32 sample_index = 0; sample_index < sample_count; ++sample_index) {
+                audio_sample sample = samples[sample_index * channel_count + channel_index];
+                float x = (float) sample_index / (float) (sample_count - 1) * rtSize.width;
+                float y = channel_baseline - sample * zoom * rtSize.height / 2 / channel_count;
+                if (sample_index == 0) {
+                    pSink->BeginFigure(D2D1::Point2F(x, y), D2D1_FIGURE_BEGIN_HOLLOW);
+                } else {
+                    pSink->AddLine(D2D1::Point2F(x, y));
+                }
+            }
+            if (channel_count > 0 && sample_count > 0) {
+                pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+            }
+        }
+
+        if (SUCCEEDED(hr)) {
+            hr = pSink->Close();
+        }
+
+        if (SUCCEEDED(hr)) {
+            D2D1_STROKE_STYLE_PROPERTIES strokeStyleProperties = D2D1::StrokeStyleProperties(D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_LINE_JOIN_BEVEL);
+
+            CComPtr<ID2D1StrokeStyle> pStrokeStyle;
+            m_pDirect2dFactory->CreateStrokeStyle(strokeStyleProperties, nullptr, 0, &pStrokeStyle);
+
+            m_pRenderTarget->DrawGeometry(pPath, m_pStrokeBrush, 0.75f, pStrokeStyle);
+        }
+    }
+
+    return hr;
+}
+
 
 void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) {
     if (m_callback->is_edit_mode_enabled()) {

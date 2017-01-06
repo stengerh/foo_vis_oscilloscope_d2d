@@ -29,6 +29,7 @@ public:
     void OnContextMenu(CWindow wnd, CPoint point);
 
     HRESULT Render();
+    HRESULT RenderChunk(const audio_chunk &chunk);
     HRESULT CreateDeviceIndependentResources();
     HRESULT CreateDeviceResources();
     void DiscardDeviceResources();

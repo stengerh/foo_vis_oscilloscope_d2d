@@ -18,9 +18,22 @@ public:
 	virtual void set_configuration(ui_element_config::ptr p_data);
 	virtual ui_element_config::ptr get_configuration();
 
+    LRESULT OnCreate(LPCREATESTRUCT lpCreateStruct);
+    void OnDestroy();
+    void OnPaint(CDCHandle dc);
+    void OnSize(UINT nType, CSize size);
     void OnContextMenu(CWindow wnd, CPoint point);
 
+    HRESULT Render();
+    HRESULT CreateDeviceIndependentResources();
+    HRESULT CreateDeviceResources();
+    void DiscardDeviceResources();
+
     BEGIN_MSG_MAP_EX(oscilloscope_ui_element_instance)
+        MSG_WM_CREATE(OnCreate)
+        MSG_WM_DESTROY(OnDestroy)
+        MSG_WM_PAINT(OnPaint)
+        MSG_WM_SIZE(OnSize)
         MSG_WM_CONTEXTMENU(OnContextMenu)
     END_MSG_MAP()
 
@@ -29,4 +42,9 @@ protected:
 
 private:
     oscilloscope_config m_config;
+
+    CComPtr<ID2D1Factory> m_pDirect2dFactory;
+    CComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
+    CComPtr<ID2D1SolidColorBrush> m_pStrokeBrush;
+    CComPtr<ID2D1SolidColorBrush> m_pFillBrush;
 };

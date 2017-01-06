@@ -16,3 +16,6 @@
 
 #include <foobar2000/SDK/foobar2000.h>
 #include <foobar2000/ATLHelpers/ATLHelpers.h>
+
+#include <d2d1.h>
+#include <d2d1helper.h>

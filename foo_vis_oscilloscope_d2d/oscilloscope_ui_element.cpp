@@ -52,6 +52,109 @@ ui_element_config::ptr oscilloscope_ui_element_instance::get_configuration() {
     return builder.finish(g_get_guid());
 }
 
+LRESULT oscilloscope_ui_element_instance::OnCreate(LPCREATESTRUCT lpCreateStruct) {
+    HRESULT hr = S_OK;
+    
+    hr = CreateDeviceIndependentResources();
+
+    if (FAILED(hr)) {
+        console::formatter() << core_api::get_my_file_name() << ": could not create Direct2D factory";
+    }
+
+    return 0;
+}
+
+void oscilloscope_ui_element_instance::OnDestroy() {
+    m_pDirect2dFactory.Release();
+    m_pRenderTarget.Release();
+    m_pStrokeBrush.Release();
+    m_pFillBrush.Release();
+}
+
+void oscilloscope_ui_element_instance::OnPaint(CDCHandle dc) {
+    Render();
+    ValidateRect(nullptr);
+}
+
+void oscilloscope_ui_element_instance::OnSize(UINT nType, CSize size) {
+    if (m_pRenderTarget) {
+        m_pRenderTarget->Resize(D2D1::SizeU(size.cx, size.cy));
+    }
+}
+
+HRESULT oscilloscope_ui_element_instance::Render() {
+    HRESULT hr = S_OK;
+
+    hr = CreateDeviceResources();
+
+    if (SUCCEEDED(hr)) {
+        m_pRenderTarget->BeginDraw();
+
+        m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        m_pRenderTarget->Clear(D2D1::ColorF(1.0f, 1.0f, 1.0f));
+
+        D2D1_SIZE_F rtSize = m_pRenderTarget->GetSize();
+
+        CComPtr<ID2D1PathGeometry> pPath;
+
+        hr = m_pDirect2dFactory->CreatePathGeometry(&pPath);
+
+        if (SUCCEEDED(hr)) {
+            CComPtr<ID2D1GeometrySink> pSink;
+            
+            hr = pPath->Open(&pSink);
+
+            t_uint32 channel_count = 2;
+            t_uint32 sample_count = 6;
+            audio_sample samples[] = {
+                0.0f, 0.0f,
+                0.1f, 0.0f,
+                0.0f, -0.1f,
+                0.5f, 0.5f,
+                -0.5f, -0.5f,
+                0.0f, 0.0f,
+            };
+
+            for (t_uint32 channel_index = 0; channel_index < channel_count; ++channel_index) {
+                float zoom = (float) m_config.get_zoom_factor();
+                float channel_baseline = (float) (channel_index + 0.5) / (float) channel_count * rtSize.height;
+                for (t_uint32 sample_index = 0; sample_index < sample_count; ++sample_index) {
+                    audio_sample sample = samples[sample_index * channel_count + channel_index];
+                    float x = (float) sample_index / (float) (sample_count - 1) * rtSize.width;
+                    float y = channel_baseline + sample * zoom * rtSize.height / 2 / channel_count;
+                    if (sample_index == 0) {
+                        pSink->BeginFigure(D2D1::Point2F(x, y), D2D1_FIGURE_BEGIN_HOLLOW);
+                    } else {
+                        pSink->AddLine(D2D1::Point2F(x, y));
+                    }
+                }
+                if (channel_count > 0 && sample_count > 0) {
+                    pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+                }
+            }
+
+            if (SUCCEEDED(hr)) {
+                hr = pSink->Close();
+            }
+
+            if (SUCCEEDED(hr)) {
+                m_pRenderTarget->DrawGeometry(pPath, m_pStrokeBrush);
+            }
+        }
+
+        hr = m_pRenderTarget->EndDraw();
+
+        if (hr == D2DERR_RECREATE_TARGET)
+        {
+            hr = S_OK;
+            DiscardDeviceResources();
+        }
+    }
+
+    return hr;
+}
+
 void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) {
     if (m_callback->is_edit_mode_enabled()) {
         SetMsgHandled(FALSE);
@@ -93,6 +196,7 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         switch (cmd) {
         case 1:
             m_config.m_hw_rendering_enabled = !m_config.m_hw_rendering_enabled;
+            DiscardDeviceResources();
             break;
         case 2:
             m_config.m_downmix_enabled = !m_config.m_downmix_enabled;
@@ -149,7 +253,54 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
             m_config.m_zoom_percent = 800;
             break;
         }
+
+        Invalidate();
     }
+}
+
+HRESULT oscilloscope_ui_element_instance::CreateDeviceIndependentResources() {
+    HRESULT hr = S_OK;
+
+    hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pDirect2dFactory);
+
+    return hr;
+}
+
+HRESULT oscilloscope_ui_element_instance::CreateDeviceResources() {
+    HRESULT hr = S_OK;
+
+    if (m_pDirect2dFactory) {
+        if (!m_pRenderTarget) {
+            CRect rcClient;
+            GetClientRect(rcClient);
+
+            D2D1_SIZE_U size = D2D1::SizeU(rcClient.Width(), rcClient.Height());
+
+            D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties = D2D1::RenderTargetProperties(m_config.m_hw_rendering_enabled ? D2D1_RENDER_TARGET_TYPE_DEFAULT : D2D1_RENDER_TARGET_TYPE_SOFTWARE);
+
+            D2D1_HWND_RENDER_TARGET_PROPERTIES hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(m_hWnd, size);
+
+            hr = m_pDirect2dFactory->CreateHwndRenderTarget(renderTargetProperties, hwndRenderTargetProperties, &m_pRenderTarget);
+        }
+
+        if (SUCCEEDED(hr) && !m_pFillBrush) {
+            hr = m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f), &m_pFillBrush);
+        }
+
+        if (SUCCEEDED(hr) && !m_pStrokeBrush) {
+            hr = m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f), &m_pStrokeBrush);
+        }
+    } else {
+        hr = S_FALSE;
+    }
+
+    return hr;
+}
+
+void oscilloscope_ui_element_instance::DiscardDeviceResources() {
+    m_pRenderTarget.Release();
+    m_pFillBrush.Release();
+    m_pStrokeBrush.Release();
 }
 
 static service_factory_single_t< ui_element_impl_visualisation< oscilloscope_ui_element_instance> > g_ui_element_factory;

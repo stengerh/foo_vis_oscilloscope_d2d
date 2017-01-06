@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A43EDF7A-198C-465E-8C67-A1877AC28748}</ProjectGuid>
+    <ProjectGuid>{2F1B0B7B-5778-415D-A976-FC8B5426E93F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>foo_basic_template</RootNamespace>
+    <RootNamespace>foo_vis_oscilloscope_d2d</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

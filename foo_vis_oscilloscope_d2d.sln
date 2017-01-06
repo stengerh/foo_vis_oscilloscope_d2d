@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "foo_basic_template", "foo_basic_template\foo_basic_template.vcxproj", "{A43EDF7A-198C-465E-8C67-A1877AC28748}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "foo_vis_oscilloscope_d2d", "foo_vis_oscilloscope_d2d\foo_vis_oscilloscope_d2d.vcxproj", "{2F1B0B7B-5778-415D-A976-FC8B5426E93F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pfc", "foobar2000_sdk\pfc\pfc.vcxproj", "{EBFFFB4E-261D-44D3-B89C-957B31A0BF9C}"
 EndProject

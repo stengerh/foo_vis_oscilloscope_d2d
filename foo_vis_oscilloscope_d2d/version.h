@@ -6,12 +6,12 @@
 // Component filename (string literal)
 // TODO Update component filename
 #if !defined(COMPONENT_FILENAME)
-#define COMPONENT_FILENAME "foo_basic_template.dll"
+#error Please define COMPONENT_FILENAME in the preprocessor settings!
 #endif
 
 // Component name (string literal)
 // TODO Update component name
-#define COMPONENT_NAME "Basic Template"
+#define COMPONENT_NAME "Oscilloscope"
 
 // Component author
 // TODO Update component author

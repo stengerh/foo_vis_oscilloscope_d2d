@@ -7,9 +7,7 @@
 DECLARE_COMPONENT_VERSION(
     COMPONENT_NAME,
     COMPONENT_VERSION,
-    "Basic template for foobar2000 components\n"
-    "\n"
-    "This is a project template for component developers. The component does not actually contain any useful functionality.\n"
+    "Oscilloscope visualization with support for hardware accelerated graphics using Direct2D\n"
     "\n"
     "Copyright (C) " COMPONENT_COPYRIGHT_YEAR " " COMPONENT_AUTHOR "\n"
 )

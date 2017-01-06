@@ -5,9 +5,7 @@
 
 // Component filename (string literal)
 // TODO Update component filename
-#if !defined(COMPONENT_FILENAME)
-#error Please define COMPONENT_FILENAME in the preprocessor settings!
-#endif
+#define COMPONENT_FILENAME "foo_vis_oscilloscope_d2d.dll"
 
 // Component name (string literal)
 // TODO Update component name

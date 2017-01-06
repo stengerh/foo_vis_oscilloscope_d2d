@@ -90,6 +90,7 @@
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="oscilloscope_config.h" />
     <ClInclude Include="oscilloscope_ui_element.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -97,6 +98,7 @@
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="oscilloscope_config.cpp" />
     <ClCompile Include="oscilloscope_ui_element.cpp" />
     <ClCompile Include="version.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -33,6 +33,9 @@
     <ClInclude Include="oscilloscope_ui_element.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="oscilloscope_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="version.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="oscilloscope_ui_element.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="oscilloscope_config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

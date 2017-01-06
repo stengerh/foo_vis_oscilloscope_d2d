@@ -61,6 +61,17 @@ void oscilloscope_ui_element_instance::notify(const GUID & p_what, t_size p_para
     }
 }
 
+CWndClassInfo& oscilloscope_ui_element_instance::GetWndClassInfo()
+{
+	static ATL::CWndClassInfo wc =
+	{
+        { sizeof(WNDCLASSEX), CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, StartWindowProc,
+		  0, 0, NULL, NULL, NULL, (HBRUSH) NULL, NULL, TEXT("OscilloscopeD2D"), NULL },
+		NULL, NULL, IDC_ARROW, TRUE, 0, _T("")
+	};
+	return wc;
+}
+
 LRESULT oscilloscope_ui_element_instance::OnCreate(LPCREATESTRUCT lpCreateStruct) {
     HRESULT hr = S_OK;
     

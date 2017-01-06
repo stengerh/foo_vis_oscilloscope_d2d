@@ -19,6 +19,8 @@ public:
 	virtual ui_element_config::ptr get_configuration();
     virtual void notify(const GUID & p_what, t_size p_param1, const void * p_param2, t_size p_param2size);
 
+    static CWndClassInfo& GetWndClassInfo();
+
     LRESULT OnCreate(LPCREATESTRUCT lpCreateStruct);
     void OnDestroy();
     void OnTimer(UINT_PTR nIDEvent);

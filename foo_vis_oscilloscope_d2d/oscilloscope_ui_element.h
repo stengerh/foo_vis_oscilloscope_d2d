@@ -28,6 +28,7 @@ public:
     void OnLButtonDblClk(UINT nFlags, CPoint point);
 
     void ToggleFullScreen();
+    void UpdateRefreshRateLimit();
 
     HRESULT Render();
     HRESULT RenderChunk(const audio_chunk &chunk);
@@ -76,6 +77,10 @@ private:
         IDM_ZOOM_400,
         IDM_ZOOM_600,
         IDM_ZOOM_800,
+        IDM_REFRESH_RATE_LIMIT_20,
+        IDM_REFRESH_RATE_LIMIT_60,
+        IDM_REFRESH_RATE_LIMIT_100,
+        IDM_REFRESH_RATE_LIMIT_200,
     };
 
     oscilloscope_config m_config;

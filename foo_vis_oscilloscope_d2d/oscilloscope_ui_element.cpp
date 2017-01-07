@@ -46,6 +46,8 @@ void oscilloscope_ui_element_instance::set_configuration(ui_element_config::ptr 
     oscilloscope_config config;
     config.parse(parser);
     m_config = config;
+
+    UpdateRefreshRateLimit();
 }
 
 ui_element_config::ptr oscilloscope_ui_element_instance::get_configuration() {
@@ -255,7 +257,7 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         menu.AppendMenu(MF_STRING, IDM_TOGGLE_FULLSCREEN, TEXT("Toggle Full-Screen Mode"));
         menu.AppendMenu(MF_SEPARATOR);
         menu.AppendMenu(MF_STRING | (m_config.m_downmix_enabled ? MF_CHECKED : 0), IDM_DOWNMIX_ENABLED, TEXT("Downmix Channels"));
-        menu.AppendMenu(MF_STRING | (m_config.m_trigger_enabled ? MF_CHECKED : 0), IDM_TRIGGER_ENABLED, TEXT("Trigger on zero crossing"));
+        menu.AppendMenu(MF_STRING | (m_config.m_trigger_enabled ? MF_CHECKED : 0), IDM_TRIGGER_ENABLED, TEXT("Trigger on Zero Crossing"));
 
         CMenu durationMenu;
         durationMenu.CreatePopupMenu();
@@ -284,6 +286,16 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 800) ? MF_CHECKED : 0), IDM_ZOOM_800, TEXT("800 %"));
 
         menu.AppendMenu(MF_STRING, zoomMenu, TEXT("Zoom"));
+
+        CMenu refreshRateLimitMenu;
+        refreshRateLimitMenu.CreatePopupMenu();
+        refreshRateLimitMenu.AppendMenu(MF_STRING | ((m_config.m_refresh_rate_limit_hz == 20) ? MF_CHECKED : 0), IDM_REFRESH_RATE_LIMIT_20, TEXT("20 Hz"));
+        refreshRateLimitMenu.AppendMenu(MF_STRING | ((m_config.m_refresh_rate_limit_hz == 60) ? MF_CHECKED : 0), IDM_REFRESH_RATE_LIMIT_60, TEXT("60 Hz"));
+        refreshRateLimitMenu.AppendMenu(MF_STRING | ((m_config.m_refresh_rate_limit_hz == 100) ? MF_CHECKED : 0), IDM_REFRESH_RATE_LIMIT_100, TEXT("100 Hz"));
+        refreshRateLimitMenu.AppendMenu(MF_STRING | ((m_config.m_refresh_rate_limit_hz == 200) ? MF_CHECKED : 0), IDM_REFRESH_RATE_LIMIT_200, TEXT("200 Hz"));
+
+        menu.AppendMenu(MF_STRING, refreshRateLimitMenu, TEXT("Refresh Rate Limit"));
+
         menu.AppendMenu(MF_STRING | (m_config.m_hw_rendering_enabled ? MF_CHECKED : 0), IDM_HW_RENDERING_ENABLED, TEXT("Allow Hardware Rendering"));
 
         menu.SetMenuDefaultItem(IDM_TOGGLE_FULLSCREEN);
@@ -361,6 +373,22 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         case IDM_ZOOM_800:
             m_config.m_zoom_percent = 800;
             break;
+        case IDM_REFRESH_RATE_LIMIT_20:
+            m_config.m_refresh_rate_limit_hz = 20;
+            UpdateRefreshRateLimit();
+            break;
+        case IDM_REFRESH_RATE_LIMIT_60:
+            m_config.m_refresh_rate_limit_hz = 60;
+            UpdateRefreshRateLimit();
+            break;
+        case IDM_REFRESH_RATE_LIMIT_100:
+            m_config.m_refresh_rate_limit_hz = 100;
+            UpdateRefreshRateLimit();
+            break;
+        case IDM_REFRESH_RATE_LIMIT_200:
+            m_config.m_refresh_rate_limit_hz = 200;
+            UpdateRefreshRateLimit();
+            break;
         }
 
         Invalidate();
@@ -373,6 +401,10 @@ void oscilloscope_ui_element_instance::OnLButtonDblClk(UINT nFlags, CPoint point
 
 void oscilloscope_ui_element_instance::ToggleFullScreen() {
     static_api_ptr_t<ui_element_common_methods_v2>()->toggle_fullscreen(g_get_guid(), core_api::get_main_window());
+}
+
+void oscilloscope_ui_element_instance::UpdateRefreshRateLimit() {
+    m_refresh_interval = pfc::clip_t<DWORD>(1000 / m_config.m_refresh_rate_limit_hz, 5, 1000);
 }
 
 HRESULT oscilloscope_ui_element_instance::CreateDeviceIndependentResources() {

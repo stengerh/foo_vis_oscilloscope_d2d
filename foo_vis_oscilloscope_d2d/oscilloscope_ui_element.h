@@ -27,6 +27,9 @@ public:
     void OnPaint(CDCHandle dc);
     void OnSize(UINT nType, CSize size);
     void OnContextMenu(CWindow wnd, CPoint point);
+    void OnLButtonDblClk(UINT nFlags, CPoint point);
+
+    void ToggleFullScreen();
 
     HRESULT Render();
     HRESULT RenderChunk(const audio_chunk &chunk);
@@ -41,6 +44,7 @@ public:
         MSG_WM_PAINT(OnPaint)
         MSG_WM_SIZE(OnSize)
         MSG_WM_CONTEXTMENU(OnContextMenu)
+        MSG_WM_LBUTTONDBLCLK(OnLButtonDblClk)
     END_MSG_MAP()
 
 protected:
@@ -49,6 +53,29 @@ protected:
 private:
     enum {
         ID_REFRESH_TIMER = 1
+    };
+
+    enum {
+        IDM_TOGGLE_FULLSCREEN = 1,
+        IDM_HW_RENDERING_ENABLED,
+        IDM_DOWNMIX_ENABLED,
+        IDM_WINDOW_DURATION_100,
+        IDM_WINDOW_DURATION_200,
+        IDM_WINDOW_DURATION_300,
+        IDM_WINDOW_DURATION_400,
+        IDM_WINDOW_DURATION_500,
+        IDM_WINDOW_DURATION_600,
+        IDM_WINDOW_DURATION_700,
+        IDM_WINDOW_DURATION_800,
+        IDM_ZOOM_50,
+        IDM_ZOOM_75,
+        IDM_ZOOM_100,
+        IDM_ZOOM_150,
+        IDM_ZOOM_200,
+        IDM_ZOOM_300,
+        IDM_ZOOM_400,
+        IDM_ZOOM_600,
+        IDM_ZOOM_800,
     };
 
     oscilloscope_config m_config;

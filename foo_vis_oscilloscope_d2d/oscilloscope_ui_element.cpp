@@ -227,104 +227,119 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
     } else {
         CMenu menu;
         menu.CreatePopupMenu();
-        menu.AppendMenu(MF_STRING | (m_config.m_hw_rendering_enabled ? MF_CHECKED : 0), 1, TEXT("Allow hardware rendering"));
-        menu.AppendMenu(MF_STRING | (m_config.m_downmix_enabled ? MF_CHECKED : 0), 2, TEXT("Downmix channels"));
+        menu.AppendMenu(MF_STRING, IDM_TOGGLE_FULLSCREEN, TEXT("Toggle Full-Screen Mode"));
+        menu.AppendMenu(MF_SEPARATOR);
+        menu.AppendMenu(MF_STRING | (m_config.m_hw_rendering_enabled ? MF_CHECKED : 0), IDM_HW_RENDERING_ENABLED, TEXT("Allow Hardware Rendering"));
+        menu.AppendMenu(MF_STRING | (m_config.m_downmix_enabled ? MF_CHECKED : 0), IDM_DOWNMIX_ENABLED, TEXT("Downmix Channels"));
 
         CMenu durationMenu;
         durationMenu.CreatePopupMenu();
-        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 100) ? MF_CHECKED : 0), 3, TEXT("100 ms"));
-        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 200) ? MF_CHECKED : 0), 4, TEXT("200 ms"));
-        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 300) ? MF_CHECKED : 0), 5, TEXT("300 ms"));
-        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 400) ? MF_CHECKED : 0), 6, TEXT("400 ms"));
-        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 500) ? MF_CHECKED : 0), 7, TEXT("500 ms"));
-        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 600) ? MF_CHECKED : 0), 8, TEXT("600 ms"));
-        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 700) ? MF_CHECKED : 0), 9, TEXT("700 ms"));
-        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 800) ? MF_CHECKED : 0), 10, TEXT("800 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 100) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_100, TEXT("100 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 200) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_200, TEXT("200 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 300) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_300, TEXT("300 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 400) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_400, TEXT("400 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 500) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_500, TEXT("500 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 600) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_600, TEXT("600 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 700) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_700, TEXT("700 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 800) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_800, TEXT("800 ms"));
 
-        menu.AppendMenu(MF_STRING, durationMenu, TEXT("Window duration"));
+        menu.AppendMenu(MF_STRING, durationMenu, TEXT("Window Duration"));
 
         CMenu zoomMenu;
         zoomMenu.CreatePopupMenu();
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 50) ? MF_CHECKED : 0), 11, TEXT("50 %"));
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 75) ? MF_CHECKED : 0), 12, TEXT("75 %"));
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 100) ? MF_CHECKED : 0), 13, TEXT("100 %"));
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 150) ? MF_CHECKED : 0), 14, TEXT("150 %"));
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 200) ? MF_CHECKED : 0), 15, TEXT("200 %"));
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 300) ? MF_CHECKED : 0), 16, TEXT("300 %"));
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 400) ? MF_CHECKED : 0), 17, TEXT("400 %"));
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 600) ? MF_CHECKED : 0), 18, TEXT("600 %"));
-        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 800) ? MF_CHECKED : 0), 19, TEXT("800 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 50) ? MF_CHECKED : 0), IDM_ZOOM_50, TEXT("50 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 75) ? MF_CHECKED : 0), IDM_ZOOM_75, TEXT("75 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 100) ? MF_CHECKED : 0), IDM_ZOOM_100, TEXT("100 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 150) ? MF_CHECKED : 0), IDM_ZOOM_150, TEXT("150 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 200) ? MF_CHECKED : 0), IDM_ZOOM_200, TEXT("200 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 300) ? MF_CHECKED : 0), IDM_ZOOM_300, TEXT("300 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 400) ? MF_CHECKED : 0), IDM_ZOOM_400, TEXT("400 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 600) ? MF_CHECKED : 0), IDM_ZOOM_600, TEXT("600 %"));
+        zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 800) ? MF_CHECKED : 0), IDM_ZOOM_800, TEXT("800 %"));
 
         menu.AppendMenu(MF_STRING, zoomMenu, TEXT("Zoom"));
+
+        menu.SetMenuDefaultItem(IDM_TOGGLE_FULLSCREEN);
 
         int cmd = menu.TrackPopupMenu(TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, *this);
 
         switch (cmd) {
-        case 1:
+        case IDM_TOGGLE_FULLSCREEN:
+            ToggleFullScreen();
+            break;
+        case IDM_HW_RENDERING_ENABLED:
             m_config.m_hw_rendering_enabled = !m_config.m_hw_rendering_enabled;
             DiscardDeviceResources();
             break;
-        case 2:
+        case IDM_DOWNMIX_ENABLED:
             m_config.m_downmix_enabled = !m_config.m_downmix_enabled;
             if (m_vis_stream.is_valid()) {
                 m_vis_stream->set_channel_mode(m_config.m_downmix_enabled ? visualisation_stream_v2::channel_mode_mono : visualisation_stream_v2::channel_mode_default);
             }
             break;
-        case 3:
+        case IDM_WINDOW_DURATION_100:
             m_config.m_window_duration_millis = 100;
             break;
-        case 4:
+        case IDM_WINDOW_DURATION_200:
             m_config.m_window_duration_millis = 200;
             break;
-        case 5:
+        case IDM_WINDOW_DURATION_300:
             m_config.m_window_duration_millis = 300;
             break;
-        case 6:
+        case IDM_WINDOW_DURATION_400:
             m_config.m_window_duration_millis = 400;
             break;
-        case 7:
+        case IDM_WINDOW_DURATION_500:
             m_config.m_window_duration_millis = 500;
             break;
-        case 8:
+        case IDM_WINDOW_DURATION_600:
             m_config.m_window_duration_millis = 600;
             break;
-        case 9:
+        case IDM_WINDOW_DURATION_700:
             m_config.m_window_duration_millis = 700;
             break;
-        case 10:
+        case IDM_WINDOW_DURATION_800:
             m_config.m_window_duration_millis = 800;
             break;
-        case 11:
+        case IDM_ZOOM_50:
             m_config.m_zoom_percent = 50;
             break;
-        case 12:
+        case IDM_ZOOM_75:
             m_config.m_zoom_percent = 75;
             break;
-        case 13:
+        case IDM_ZOOM_100:
             m_config.m_zoom_percent = 100;
             break;
-        case 14:
+        case IDM_ZOOM_150:
             m_config.m_zoom_percent = 150;
             break;
-        case 15:
+        case IDM_ZOOM_200:
             m_config.m_zoom_percent = 200;
             break;
-        case 16:
+        case IDM_ZOOM_300:
             m_config.m_zoom_percent = 300;
             break;
-        case 17:
+        case IDM_ZOOM_400:
             m_config.m_zoom_percent = 400;
             break;
-        case 18:
+        case IDM_ZOOM_600:
             m_config.m_zoom_percent = 600;
             break;
-        case 19:
+        case IDM_ZOOM_800:
             m_config.m_zoom_percent = 800;
             break;
         }
 
         Invalidate();
     }
+}
+
+void oscilloscope_ui_element_instance::OnLButtonDblClk(UINT nFlags, CPoint point) {
+    ToggleFullScreen();
+}
+
+void oscilloscope_ui_element_instance::ToggleFullScreen() {
+    static_api_ptr_t<ui_element_common_methods_v2>()->toggle_fullscreen(g_get_guid(), core_api::get_main_window());
 }
 
 HRESULT oscilloscope_ui_element_instance::CreateDeviceIndependentResources() {

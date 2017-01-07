@@ -254,7 +254,6 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         menu.CreatePopupMenu();
         menu.AppendMenu(MF_STRING, IDM_TOGGLE_FULLSCREEN, TEXT("Toggle Full-Screen Mode"));
         menu.AppendMenu(MF_SEPARATOR);
-        menu.AppendMenu(MF_STRING | (m_config.m_hw_rendering_enabled ? MF_CHECKED : 0), IDM_HW_RENDERING_ENABLED, TEXT("Allow Hardware Rendering"));
         menu.AppendMenu(MF_STRING | (m_config.m_downmix_enabled ? MF_CHECKED : 0), IDM_DOWNMIX_ENABLED, TEXT("Downmix Channels"));
         menu.AppendMenu(MF_STRING | (m_config.m_trigger_enabled ? MF_CHECKED : 0), IDM_TRIGGER_ENABLED, TEXT("Trigger on zero crossing"));
 
@@ -285,6 +284,7 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         zoomMenu.AppendMenu(MF_STRING | ((m_config.m_zoom_percent == 800) ? MF_CHECKED : 0), IDM_ZOOM_800, TEXT("800 %"));
 
         menu.AppendMenu(MF_STRING, zoomMenu, TEXT("Zoom"));
+        menu.AppendMenu(MF_STRING | (m_config.m_hw_rendering_enabled ? MF_CHECKED : 0), IDM_HW_RENDERING_ENABLED, TEXT("Allow Hardware Rendering"));
 
         menu.SetMenuDefaultItem(IDM_TOGGLE_FULLSCREEN);
 

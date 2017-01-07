@@ -2,7 +2,7 @@
 
 #include "oscilloscope_config.h"
 
-typedef oscilloscope_config_v1 oscilloscope_config;
+typedef oscilloscope_config_v2 oscilloscope_config;
 
 class oscilloscope_ui_element_instance : public ui_element_instance, public CWindowImpl<oscilloscope_ui_element_instance> {
 public:
@@ -59,6 +59,8 @@ private:
         IDM_TOGGLE_FULLSCREEN = 1,
         IDM_HW_RENDERING_ENABLED,
         IDM_DOWNMIX_ENABLED,
+        IDM_TRIGGER_ENABLED,
+        IDM_WINDOW_DURATION_50,
         IDM_WINDOW_DURATION_100,
         IDM_WINDOW_DURATION_200,
         IDM_WINDOW_DURATION_300,

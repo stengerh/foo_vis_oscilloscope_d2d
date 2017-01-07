@@ -1,10 +1,10 @@
 #pragma once
 
-class oscilloscope_config_v1 {
+class oscilloscope_config_v2 {
 public:
     t_uint32 g_get_version();
 
-    oscilloscope_config_v1();
+    oscilloscope_config_v2();
 
     void parse(ui_element_config_parser & parser);
     void build(ui_element_config_builder & builder);
@@ -12,6 +12,7 @@ public:
 
     bool m_hw_rendering_enabled;
     bool m_downmix_enabled;
+    bool m_trigger_enabled;
     t_uint32 m_window_duration_millis;
     t_uint32 m_zoom_percent;
 

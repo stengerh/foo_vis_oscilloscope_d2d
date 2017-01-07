@@ -13,6 +13,7 @@ public:
     bool m_hw_rendering_enabled;
     bool m_downmix_enabled;
     bool m_trigger_enabled;
+    bool m_resample_enabled;
     t_uint32 m_window_duration_millis;
     t_uint32 m_zoom_percent;
     t_uint32 m_refresh_rate_limit_hz;

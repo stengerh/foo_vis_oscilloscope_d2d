@@ -184,10 +184,56 @@ HRESULT oscilloscope_ui_element_instance::RenderChunk(const audio_chunk &chunk) 
             
         hr = pPath->Open(&pSink);
 
-        t_uint32 channel_count = chunk.get_channel_count();
-        t_uint32 sample_count_total = chunk.get_sample_count();
+        audio_chunk_impl chunk2;
+        chunk2.copy(chunk);
+
+        if (m_config.m_resample_enabled) {
+            unsigned display_sample_rate = (unsigned) (rtSize.width / m_config.get_window_duration());
+            unsigned target_sample_rate = chunk.get_sample_rate();
+            while (target_sample_rate >= 2 && target_sample_rate > display_sample_rate) {
+                target_sample_rate /= 2;
+            }
+            if (target_sample_rate != chunk.get_sample_rate()) {
+                dsp::ptr resampler;
+                metadb_handle::ptr track;
+                if (static_api_ptr_t<playback_control>()->get_now_playing(track) && resampler_entry::g_create(resampler, chunk.get_sample_rate(), target_sample_rate, 1.0f)) {
+                    dsp_chunk_list_impl chunk_list;
+                    chunk_list.add_chunk(&chunk);
+                    resampler->run(&chunk_list, track, dsp::FLUSH);
+                    resampler->flush();
+
+                    bool consistent_format = true;
+                    unsigned total_sample_count = 0;
+                    for (t_size chunk_index = 0; chunk_index < chunk_list.get_count(); ++chunk_index) {
+                        if ((chunk_list.get_item(chunk_index)->get_sample_rate() == chunk_list.get_item(0)->get_sample_rate())
+                            && (chunk_list.get_item(chunk_index)->get_channel_count() == chunk_list.get_item(0)->get_channel_count())) {
+                                total_sample_count += chunk_list.get_item(chunk_index)->get_sample_count();
+                        } else {
+                            consistent_format = false;
+                            break;
+                        }
+                    }
+                    if (consistent_format && chunk_list.get_count() > 0) {
+                        unsigned channel_count = chunk_list.get_item(0)->get_channels();
+                        unsigned sample_rate = chunk_list.get_item(0)->get_sample_rate();
+
+                        pfc::array_t<audio_sample> buffer;
+                        buffer.prealloc(channel_count * total_sample_count);
+                        for (t_size chunk_index = 0; chunk_index < chunk_list.get_count(); ++chunk_index) {
+                            audio_chunk * c = chunk_list.get_item(chunk_index);
+                            buffer.append_fromptr(c->get_data(), c->get_channel_count() * c->get_sample_count());
+                        }
+
+                        chunk2.set_data(buffer.get_ptr(), total_sample_count, channel_count, sample_rate);
+                    }
+                }
+            }
+        }
+
+        t_uint32 channel_count = chunk2.get_channel_count();
+        t_uint32 sample_count_total = chunk2.get_sample_count();
         t_uint32 sample_count = m_config.m_trigger_enabled ? sample_count_total / 2 : sample_count_total;
-        const audio_sample *samples = chunk.get_data();
+        const audio_sample *samples = chunk2.get_data();
 
         if (m_config.m_trigger_enabled) {
             t_uint32 cross_min = sample_count;
@@ -219,7 +265,7 @@ HRESULT oscilloscope_ui_element_instance::RenderChunk(const audio_chunk &chunk) 
             for (t_uint32 sample_index = 0; sample_index < sample_count; ++sample_index) {
                 audio_sample sample = samples[sample_index * channel_count + channel_index];
                 float x = (float) sample_index / (float) (sample_count - 1) * rtSize.width;
-                float y = channel_baseline - sample * zoom * rtSize.height / 2 / channel_count;
+                float y = channel_baseline - sample * zoom * rtSize.height / 2 / channel_count + 0.5f;
                 if (sample_index == 0) {
                     pSink->BeginFigure(D2D1::Point2F(x, y), D2D1_FIGURE_BEGIN_HOLLOW);
                 } else {
@@ -241,7 +287,7 @@ HRESULT oscilloscope_ui_element_instance::RenderChunk(const audio_chunk &chunk) 
             CComPtr<ID2D1StrokeStyle> pStrokeStyle;
             m_pDirect2dFactory->CreateStrokeStyle(strokeStyleProperties, nullptr, 0, &pStrokeStyle);
 
-            m_pRenderTarget->DrawGeometry(pPath, m_pStrokeBrush, 0.75f, pStrokeStyle);
+            m_pRenderTarget->DrawGeometry(pPath, m_pStrokeBrush, 1.0f, pStrokeStyle);
         }
     }
 
@@ -297,6 +343,9 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
 
         menu.AppendMenu(MF_STRING, refreshRateLimitMenu, TEXT("Refresh Rate Limit"));
 
+        menu.AppendMenu(MF_SEPARATOR);
+
+        menu.AppendMenu(MF_STRING | (m_config.m_resample_enabled ? MF_CHECKED : 0), IDM_RESAMPLE_ENABLED, TEXT("Resample For Display"));
         menu.AppendMenu(MF_STRING | (m_config.m_hw_rendering_enabled ? MF_CHECKED : 0), IDM_HW_RENDERING_ENABLED, TEXT("Allow Hardware Rendering"));
 
         menu.SetMenuDefaultItem(IDM_TOGGLE_FULLSCREEN);
@@ -317,6 +366,9 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
             break;
         case IDM_TRIGGER_ENABLED:
             m_config.m_trigger_enabled = !m_config.m_trigger_enabled;
+            break;
+        case IDM_RESAMPLE_ENABLED:
+            m_config.m_resample_enabled = !m_config.m_resample_enabled;
             break;
         case IDM_WINDOW_DURATION_50:
             m_config.m_window_duration_millis = 50;

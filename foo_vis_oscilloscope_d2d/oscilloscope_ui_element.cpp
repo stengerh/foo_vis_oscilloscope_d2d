@@ -260,6 +260,7 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
 
         CMenu durationMenu;
         durationMenu.CreatePopupMenu();
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 50) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_50, TEXT("50 ms"));
         durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 100) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_100, TEXT("100 ms"));
         durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 200) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_200, TEXT("200 ms"));
         durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 300) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_300, TEXT("300 ms"));
@@ -305,6 +306,9 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
             break;
         case IDM_TRIGGER_ENABLED:
             m_config.m_trigger_enabled = !m_config.m_trigger_enabled;
+            break;
+        case IDM_WINDOW_DURATION_50:
+            m_config.m_window_duration_millis = 50;
             break;
         case IDM_WINDOW_DURATION_100:
             m_config.m_window_duration_millis = 100;

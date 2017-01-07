@@ -31,7 +31,7 @@ void oscilloscope_config_v2::parse(ui_element_config_parser & parser) {
             parser >> m_hw_rendering_enabled;
             parser >> m_downmix_enabled;
             parser >> m_window_duration_millis;
-            m_window_duration_millis = pfc::clip_t<t_uint32>(m_window_duration_millis, 100, 800);
+            m_window_duration_millis = pfc::clip_t<t_uint32>(m_window_duration_millis, 50, 800);
             parser >> m_zoom_percent;
             m_zoom_percent = pfc::clip_t<t_uint32>(m_zoom_percent, 50, 800);
             break;

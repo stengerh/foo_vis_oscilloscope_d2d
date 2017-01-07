@@ -9,17 +9,17 @@
 
 // Component name (string literal)
 // TODO Update component name
-#define COMPONENT_NAME "Oscilloscope"
+#define COMPONENT_NAME "Oscilloscope (Direct2D)"
 
 // Component author
 // TODO Update component author
-#define COMPONENT_AUTHOR "Holger Stenger"
+#define COMPONENT_AUTHOR "Holger Stenger and contributors"
 
 // The parts of the component version number (integer literals)
 // TODO Update component version, see http://semver.org
 #define COMPONENT_VERSION_MAJOR 1
-#define COMPONENT_VERSION_MINOR 0
-#define COMPONENT_VERSION_PATCH 1
+#define COMPONENT_VERSION_MINOR 1
+#define COMPONENT_VERSION_PATCH 0
 
 // Year for copyright notice (string literal)
 // TODO Update year for copyright notice

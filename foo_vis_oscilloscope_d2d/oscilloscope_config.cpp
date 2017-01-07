@@ -2,15 +2,15 @@
 
 #include "oscilloscope_config.h"
 
-t_uint32 oscilloscope_config_v2::g_get_version() {
+t_uint32 oscilloscope_config::g_get_version() {
     return 2;
 }
 
-oscilloscope_config_v2::oscilloscope_config_v2() {
+oscilloscope_config::oscilloscope_config() {
     reset();
 }
 
-void oscilloscope_config_v2::reset() {
+void oscilloscope_config::reset() {
     m_hw_rendering_enabled = true;
     m_downmix_enabled = false;
     m_trigger_enabled = false;
@@ -18,7 +18,7 @@ void oscilloscope_config_v2::reset() {
     m_zoom_percent = 100;
 }
 
-void oscilloscope_config_v2::parse(ui_element_config_parser & parser) {
+void oscilloscope_config::parse(ui_element_config_parser & parser) {
     reset();
 
     try {
@@ -43,7 +43,7 @@ void oscilloscope_config_v2::parse(ui_element_config_parser & parser) {
     }
 }
 
-void oscilloscope_config_v2::build(ui_element_config_builder & builder) {
+void oscilloscope_config::build(ui_element_config_builder & builder) {
     builder << g_get_version();
     builder << m_trigger_enabled;
     builder << m_hw_rendering_enabled;

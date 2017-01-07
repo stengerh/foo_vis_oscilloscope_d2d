@@ -1,10 +1,10 @@
 #pragma once
 
-class oscilloscope_config_v2 {
+class oscilloscope_config {
 public:
     t_uint32 g_get_version();
 
-    oscilloscope_config_v2();
+    oscilloscope_config();
 
     void parse(ui_element_config_parser & parser);
     void build(ui_element_config_builder & builder);

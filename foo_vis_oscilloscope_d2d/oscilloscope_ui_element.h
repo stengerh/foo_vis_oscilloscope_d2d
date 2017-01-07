@@ -2,8 +2,6 @@
 
 #include "oscilloscope_config.h"
 
-typedef oscilloscope_config_v2 oscilloscope_config;
-
 class oscilloscope_ui_element_instance : public ui_element_instance, public CWindowImpl<oscilloscope_ui_element_instance> {
 public:
     static void g_get_name(pfc::string_base & p_out);

@@ -140,6 +140,7 @@ HRESULT oscilloscope_ui_element_instance::Render() {
 
     if (SUCCEEDED(hr)) {
         m_pRenderTarget->BeginDraw();
+        m_pRenderTarget->SetAntialiasMode(m_config.m_low_quality_enabled ? D2D1_ANTIALIAS_MODE_ALIASED : D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 
         m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
@@ -304,6 +305,7 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         menu.AppendMenu(MF_STRING, IDM_TOGGLE_FULLSCREEN, TEXT("Toggle Full-Screen Mode"));
         menu.AppendMenu(MF_SEPARATOR);
         menu.AppendMenu(MF_STRING | (m_config.m_downmix_enabled ? MF_CHECKED : 0), IDM_DOWNMIX_ENABLED, TEXT("Downmix Channels"));
+        menu.AppendMenu(MF_STRING | (m_config.m_low_quality_enabled ? MF_CHECKED : 0), IDM_LOW_QUALITY_ENABLED, TEXT("Low Quality Mode"));
         menu.AppendMenu(MF_STRING | (m_config.m_trigger_enabled ? MF_CHECKED : 0), IDM_TRIGGER_ENABLED, TEXT("Trigger on Zero Crossing"));
 
         CMenu durationMenu;
@@ -363,6 +365,9 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         case IDM_DOWNMIX_ENABLED:
             m_config.m_downmix_enabled = !m_config.m_downmix_enabled;
             UpdateChannelMode();
+            break;
+        case IDM_LOW_QUALITY_ENABLED:
+            m_config.m_low_quality_enabled = !m_config.m_low_quality_enabled;
             break;
         case IDM_TRIGGER_ENABLED:
             m_config.m_trigger_enabled = !m_config.m_trigger_enabled;

@@ -3,7 +3,7 @@
 #include "oscilloscope_config.h"
 
 t_uint32 oscilloscope_config::g_get_version() {
-    return 4;
+    return 5;
 }
 
 oscilloscope_config::oscilloscope_config() {
@@ -15,6 +15,7 @@ void oscilloscope_config::reset() {
     m_downmix_enabled = false;
     m_trigger_enabled = false;
     m_resample_enabled = false;
+    m_low_quality_enabled = false;
     m_window_duration_millis = 100;
     m_zoom_percent = 100;
     m_refresh_rate_limit_hz = 20;
@@ -27,6 +28,9 @@ void oscilloscope_config::parse(ui_element_config_parser & parser) {
         t_uint32 version;
         parser >> version;
         switch (version) {
+        case 5:
+            parser >> m_low_quality_enabled;
+            // fall through
         case 4:
             parser >> m_resample_enabled;
             // fall through
@@ -55,6 +59,7 @@ void oscilloscope_config::parse(ui_element_config_parser & parser) {
 
 void oscilloscope_config::build(ui_element_config_builder & builder) {
     builder << g_get_version();
+    builder << m_low_quality_enabled;
     builder << m_resample_enabled;
     builder << m_refresh_rate_limit_hz;
     builder << m_trigger_enabled;

@@ -14,6 +14,7 @@ public:
     bool m_downmix_enabled;
     bool m_trigger_enabled;
     bool m_resample_enabled;
+    bool m_low_quality_enabled;
     t_uint32 m_window_duration_millis;
     t_uint32 m_zoom_percent;
     t_uint32 m_refresh_rate_limit_hz;

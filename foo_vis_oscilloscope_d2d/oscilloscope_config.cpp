@@ -51,6 +51,7 @@ void oscilloscope_config::parse(ui_element_config_parser & parser) {
 
 void oscilloscope_config::build(ui_element_config_builder & builder) {
     builder << g_get_version();
+    builder << m_refresh_rate_limit_hz;
     builder << m_trigger_enabled;
     builder << m_hw_rendering_enabled;
     builder << m_downmix_enabled;

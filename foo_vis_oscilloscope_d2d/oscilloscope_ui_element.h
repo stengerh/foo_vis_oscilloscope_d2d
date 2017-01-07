@@ -28,6 +28,7 @@ public:
     void OnLButtonDblClk(UINT nFlags, CPoint point);
 
     void ToggleFullScreen();
+    void UpdateChannelMode();
     void UpdateRefreshRateLimit();
 
     HRESULT Render();

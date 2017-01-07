@@ -47,6 +47,7 @@ void oscilloscope_ui_element_instance::set_configuration(ui_element_config::ptr 
     config.parse(parser);
     m_config = config;
 
+    UpdateChannelMode();
     UpdateRefreshRateLimit();
 }
 
@@ -89,7 +90,7 @@ LRESULT oscilloscope_ui_element_instance::OnCreate(LPCREATESTRUCT lpCreateStruct
         vis_manager->create_stream(m_vis_stream, 0);
 
         m_vis_stream->request_backlog(0.8);
-        m_vis_stream->set_channel_mode(m_config.m_downmix_enabled ? visualisation_stream_v2::channel_mode_mono : visualisation_stream_v2::channel_mode_default);
+        UpdateChannelMode();
     } catch (std::exception & exc) {
         console::formatter() << core_api::get_my_file_name() << ": exception while creating visualisation stream: " << exc;
     }
@@ -312,9 +313,7 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
             break;
         case IDM_DOWNMIX_ENABLED:
             m_config.m_downmix_enabled = !m_config.m_downmix_enabled;
-            if (m_vis_stream.is_valid()) {
-                m_vis_stream->set_channel_mode(m_config.m_downmix_enabled ? visualisation_stream_v2::channel_mode_mono : visualisation_stream_v2::channel_mode_default);
-            }
+            UpdateChannelMode();
             break;
         case IDM_TRIGGER_ENABLED:
             m_config.m_trigger_enabled = !m_config.m_trigger_enabled;
@@ -401,6 +400,12 @@ void oscilloscope_ui_element_instance::OnLButtonDblClk(UINT nFlags, CPoint point
 
 void oscilloscope_ui_element_instance::ToggleFullScreen() {
     static_api_ptr_t<ui_element_common_methods_v2>()->toggle_fullscreen(g_get_guid(), core_api::get_main_window());
+}
+
+void oscilloscope_ui_element_instance::UpdateChannelMode() {
+    if (m_vis_stream.is_valid()) {
+        m_vis_stream->set_channel_mode(m_config.m_downmix_enabled ? visualisation_stream_v2::channel_mode_mono : visualisation_stream_v2::channel_mode_default);
+    }
 }
 
 void oscilloscope_ui_element_instance::UpdateRefreshRateLimit() {

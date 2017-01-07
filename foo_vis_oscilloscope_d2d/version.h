@@ -19,7 +19,7 @@
 // TODO Update component version, see http://semver.org
 #define COMPONENT_VERSION_MAJOR 1
 #define COMPONENT_VERSION_MINOR 0
-#define COMPONENT_VERSION_PATCH 0
+#define COMPONENT_VERSION_PATCH 1
 
 // Year for copyright notice (string literal)
 // TODO Update year for copyright notice

@@ -149,7 +149,7 @@ HRESULT oscilloscope_ui_element_instance::Render() {
             if (m_vis_stream->get_absolute_time(time)) {
                 double window_duration = m_config.get_window_duration();
                 audio_chunk_impl chunk;
-                if (m_vis_stream->get_chunk_absolute(chunk, time - window_duration / 2, window_duration)) {
+                if (m_vis_stream->get_chunk_absolute(chunk, time - window_duration / 2, window_duration * (m_config.m_trigger_enabled ? 2 : 1))) {
                     RenderChunk(chunk);
                 }
             }
@@ -182,8 +182,33 @@ HRESULT oscilloscope_ui_element_instance::RenderChunk(const audio_chunk &chunk) 
         hr = pPath->Open(&pSink);
 
         t_uint32 channel_count = chunk.get_channel_count();
-        t_uint32 sample_count = chunk.get_sample_count();
+        t_uint32 sample_count_total = chunk.get_sample_count();
+        t_uint32 sample_count = m_config.m_trigger_enabled ? sample_count_total / 2 : sample_count_total;
         const audio_sample *samples = chunk.get_data();
+
+        if (m_config.m_trigger_enabled) {
+            t_uint32 cross_min = sample_count;
+            t_uint32 cross_max = 0;
+
+            for (t_uint32 channel_index = 0; channel_index < channel_count; ++channel_index) {
+                audio_sample sample0 = samples[channel_index];
+                audio_sample sample1 = samples[1 * channel_count + channel_index];
+                audio_sample sample2;
+                for (t_uint32 sample_index = 2; sample_index < sample_count; ++sample_index) {
+                    sample2 = samples[sample_index * channel_count + channel_index];
+                    if ((sample0 < 0.0) && (sample1 >= 0.0) && (sample2 >= 0.0)) {
+                        if (cross_min > sample_index - 1)
+                            cross_min = sample_index - 1;
+                        if (cross_max < sample_index - 1)
+                            cross_max = sample_index - 1;
+                    }
+                    sample0 = sample1;
+                    sample1 = sample2;
+                }
+            }
+
+            samples += cross_min * channel_count;
+        }
 
         for (t_uint32 channel_index = 0; channel_index < channel_count; ++channel_index) {
             float zoom = (float) m_config.get_zoom_factor();
@@ -231,6 +256,7 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         menu.AppendMenu(MF_SEPARATOR);
         menu.AppendMenu(MF_STRING | (m_config.m_hw_rendering_enabled ? MF_CHECKED : 0), IDM_HW_RENDERING_ENABLED, TEXT("Allow Hardware Rendering"));
         menu.AppendMenu(MF_STRING | (m_config.m_downmix_enabled ? MF_CHECKED : 0), IDM_DOWNMIX_ENABLED, TEXT("Downmix Channels"));
+        menu.AppendMenu(MF_STRING | (m_config.m_trigger_enabled ? MF_CHECKED : 0), IDM_TRIGGER_ENABLED, TEXT("Trigger on zero crossing"));
 
         CMenu durationMenu;
         durationMenu.CreatePopupMenu();
@@ -276,6 +302,9 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
             if (m_vis_stream.is_valid()) {
                 m_vis_stream->set_channel_mode(m_config.m_downmix_enabled ? visualisation_stream_v2::channel_mode_mono : visualisation_stream_v2::channel_mode_default);
             }
+            break;
+        case IDM_TRIGGER_ENABLED:
+            m_config.m_trigger_enabled = !m_config.m_trigger_enabled;
             break;
         case IDM_WINDOW_DURATION_100:
             m_config.m_window_duration_millis = 100;

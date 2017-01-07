@@ -32,7 +32,7 @@ ui_element_config::ptr oscilloscope_ui_element_instance::g_get_default_configura
 oscilloscope_ui_element_instance::oscilloscope_ui_element_instance(ui_element_config::ptr p_data, ui_element_instance_callback::ptr p_callback)
     : m_callback(p_callback)
     , m_last_refresh(0)
-    , m_refresh_interval(50)
+    , m_refresh_interval(10)
 {
     set_configuration(p_data);
 }

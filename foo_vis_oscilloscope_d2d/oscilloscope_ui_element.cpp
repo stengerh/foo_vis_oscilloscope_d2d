@@ -288,7 +288,7 @@ HRESULT oscilloscope_ui_element_instance::RenderChunk(const audio_chunk &chunk) 
             CComPtr<ID2D1StrokeStyle> pStrokeStyle;
             m_pDirect2dFactory->CreateStrokeStyle(strokeStyleProperties, nullptr, 0, &pStrokeStyle);
 
-            m_pRenderTarget->DrawGeometry(pPath, m_pStrokeBrush, 1.0f, pStrokeStyle);
+            m_pRenderTarget->DrawGeometry(pPath, m_pStrokeBrush, (FLOAT)m_config.get_line_stroke_width(), pStrokeStyle);
         }
     }
 
@@ -344,6 +344,17 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         refreshRateLimitMenu.AppendMenu(MF_STRING | ((m_config.m_refresh_rate_limit_hz == 200) ? MF_CHECKED : 0), IDM_REFRESH_RATE_LIMIT_200, TEXT("200 Hz"));
 
         menu.AppendMenu(MF_STRING, refreshRateLimitMenu, TEXT("Refresh Rate Limit"));
+
+        CMenu lineStrokeWidthMenu;
+        lineStrokeWidthMenu.CreatePopupMenu();
+        lineStrokeWidthMenu.AppendMenu(MF_STRING | ((m_config.m_line_stroke_width == 5) ? MF_CHECKED : 0), IDM_LINE_STROKE_WIDTH_5, TEXT("0.5 px"));
+        lineStrokeWidthMenu.AppendMenu(MF_STRING | ((m_config.m_line_stroke_width == 10) ? MF_CHECKED : 0), IDM_LINE_STROKE_WIDTH_10, TEXT("1.0 px"));
+        lineStrokeWidthMenu.AppendMenu(MF_STRING | ((m_config.m_line_stroke_width == 15) ? MF_CHECKED : 0), IDM_LINE_STROKE_WIDTH_15, TEXT("1.5 px"));
+        lineStrokeWidthMenu.AppendMenu(MF_STRING | ((m_config.m_line_stroke_width == 20) ? MF_CHECKED : 0), IDM_LINE_STROKE_WIDTH_20, TEXT("2.0 px"));
+        lineStrokeWidthMenu.AppendMenu(MF_STRING | ((m_config.m_line_stroke_width == 25) ? MF_CHECKED : 0), IDM_LINE_STROKE_WIDTH_25, TEXT("2.5 px"));
+        lineStrokeWidthMenu.AppendMenu(MF_STRING | ((m_config.m_line_stroke_width == 30) ? MF_CHECKED : 0), IDM_LINE_STROKE_WIDTH_30, TEXT("3.0 px"));
+
+        menu.AppendMenu(MF_STRING, lineStrokeWidthMenu, TEXT("Line Stroke Width"));
 
         menu.AppendMenu(MF_SEPARATOR);
 
@@ -444,6 +455,24 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
         case IDM_REFRESH_RATE_LIMIT_200:
             m_config.m_refresh_rate_limit_hz = 200;
             UpdateRefreshRateLimit();
+            break;
+        case IDM_LINE_STROKE_WIDTH_5:
+            m_config.m_line_stroke_width = 5;
+            break;
+        case IDM_LINE_STROKE_WIDTH_10:
+            m_config.m_line_stroke_width = 10;
+            break;
+        case IDM_LINE_STROKE_WIDTH_15:
+            m_config.m_line_stroke_width = 15;
+            break;
+        case IDM_LINE_STROKE_WIDTH_20:
+            m_config.m_line_stroke_width = 20;
+            break;
+        case IDM_LINE_STROKE_WIDTH_25:
+            m_config.m_line_stroke_width = 25;
+            break;
+        case IDM_LINE_STROKE_WIDTH_30:
+            m_config.m_line_stroke_width = 30;
             break;
         }
 

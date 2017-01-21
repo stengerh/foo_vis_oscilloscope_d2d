@@ -84,6 +84,12 @@ private:
         IDM_REFRESH_RATE_LIMIT_60,
         IDM_REFRESH_RATE_LIMIT_100,
         IDM_REFRESH_RATE_LIMIT_200,
+        IDM_LINE_STROKE_WIDTH_5,
+        IDM_LINE_STROKE_WIDTH_10,
+        IDM_LINE_STROKE_WIDTH_15,
+        IDM_LINE_STROKE_WIDTH_20,
+        IDM_LINE_STROKE_WIDTH_25,
+        IDM_LINE_STROKE_WIDTH_30
     };
 
     oscilloscope_config m_config;

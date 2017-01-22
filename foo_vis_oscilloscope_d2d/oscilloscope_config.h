@@ -18,7 +18,9 @@ public:
     t_uint32 m_window_duration_millis;
     t_uint32 m_zoom_percent;
     t_uint32 m_refresh_rate_limit_hz;
+    t_uint32 m_line_stroke_width;
 
     double get_zoom_factor() {return (double) m_zoom_percent * 0.01;}
     double get_window_duration() {return (double) m_window_duration_millis * 0.001;}
+    double get_line_stroke_width() {return (double) m_line_stroke_width * 0.1;}
 };

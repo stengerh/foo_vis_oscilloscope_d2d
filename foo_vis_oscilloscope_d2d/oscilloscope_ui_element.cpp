@@ -310,6 +310,9 @@ void oscilloscope_ui_element_instance::OnContextMenu(CWindow wnd, CPoint point) 
 
         CMenu durationMenu;
         durationMenu.CreatePopupMenu();
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 5) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_5, TEXT("5 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 10) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_10, TEXT("10 ms"));
+        durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 20) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_20, TEXT("20 ms"));
         durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 50) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_50, TEXT("50 ms"));
         durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 100) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_100, TEXT("100 ms"));
         durationMenu.AppendMenu(MF_STRING | ((m_config.m_window_duration_millis == 200) ? MF_CHECKED : 0), IDM_WINDOW_DURATION_200, TEXT("200 ms"));
